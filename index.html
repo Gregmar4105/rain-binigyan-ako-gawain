@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Video Playlist Selector & Recorder</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+  <header>
+    <h1>Video Playlist Selector</h1>
+    <p>Generate, animate, and record a random selection video of your playlist for TikTok, Reels, or Shorts.</p>
+  </header>
+
+  <main class="main-container">
+    
+    <!-- Left Panel: Editor Config -->
+    <section class="glass-panel editor-section">
+      <div class="section-title">
+        <span>Configure Playlist (5 Songs)</span>
+      </div>
+
+      <!-- Global Configurations -->
+      <div class="global-config-grid">
+        <div class="form-group">
+          <label for="playlist-title">Playlist Title</label>
+          <input type="text" id="playlist-title" value="QUADRANT/PLAYLIST" placeholder="e.g. QUADRANT/PLAYLIST">
+        </div>
+        <div class="form-group">
+          <label for="record-duration">Playback / Record Duration</label>
+          <select id="record-duration">
+            <option value="5">5 Seconds</option>
+            <option value="10" selected>10 Seconds</option>
+            <option value="15">15 Seconds</option>
+            <option value="20">20 Seconds</option>
+            <option value="30">30 Seconds</option>
+            <option value="full">Full Selected Video</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- The 5 Slots -->
+      <div class="playlist-slots">
+        
+        <!-- Slot 1 -->
+        <div class="slot-card" data-index="0">
+          <div class="slot-number">1</div>
+          <div class="slot-inputs">
+            <input type="text" class="song-title-input" value="Song Title 1" placeholder="Song Title">
+            <input type="text" class="song-artist-input" value="ARTIST 1" placeholder="Artist">
+          </div>
+          <div class="slot-files">
+            <div class="file-upload-wrapper">
+              <span class="file-upload-label video-upload-label" id="label-video-0">Upload Video</span>
+              <input type="file" class="song-video-file" accept="video/*" data-index="0">
+            </div>
+            <div class="file-upload-wrapper">
+              <span class="file-upload-label image-upload-label" id="label-image-0">Thumbnail Cover (Optional)</span>
+              <input type="file" class="song-image-file" accept="image/*" data-index="0">
+            </div>
+          </div>
+        </div>
+
+        <!-- Slot 2 -->
+        <div class="slot-card" data-index="1">
+          <div class="slot-number">2</div>
+          <div class="slot-inputs">
+            <input type="text" class="song-title-input" value="Song Title 2" placeholder="Song Title">
+            <input type="text" class="song-artist-input" value="ARTIST 2" placeholder="Artist">
+          </div>
+          <div class="slot-files">
+            <div class="file-upload-wrapper">
+              <span class="file-upload-label video-upload-label" id="label-video-1">Upload Video</span>
+              <input type="file" class="song-video-file" accept="video/*" data-index="1">
+            </div>
+            <div class="file-upload-wrapper">
+              <span class="file-upload-label image-upload-label" id="label-image-1">Thumbnail Cover (Optional)</span>
+              <input type="file" class="song-image-file" accept="image/*" data-index="1">
+            </div>
+          </div>
+        </div>
+
+        <!-- Slot 3 -->
+        <div class="slot-card" data-index="2">
+          <div class="slot-number">3</div>
+          <div class="slot-inputs">
+            <input type="text" class="song-title-input" value="Song Title 3" placeholder="Song Title">
+            <input type="text" class="song-artist-input" value="ARTIST 3" placeholder="Artist">
+          </div>
+          <div class="slot-files">
+            <div class="file-upload-wrapper">
+              <span class="file-upload-label video-upload-label" id="label-video-2">Upload Video</span>
+              <input type="file" class="song-video-file" accept="video/*" data-index="2">
+            </div>
+            <div class="file-upload-wrapper">
+              <span class="file-upload-label image-upload-label" id="label-image-2">Thumbnail Cover (Optional)</span>
+              <input type="file" class="song-image-file" accept="image/*" data-index="2">
+            </div>
+          </div>
+        </div>
+
+        <!-- Slot 4 -->
+        <div class="slot-card" data-index="3">
+          <div class="slot-number">4</div>
+          <div class="slot-inputs">
+            <input type="text" class="song-title-input" value="Song Title 4" placeholder="Song Title">
+            <input type="text" class="song-artist-input" value="ARTIST 4" placeholder="Artist">
+          </div>
+          <div class="slot-files">
+            <div class="file-upload-wrapper">
+              <span class="file-upload-label video-upload-label" id="label-video-3">Upload Video</span>
+              <input type="file" class="song-video-file" accept="video/*" data-index="3">
+            </div>
+            <div class="file-upload-wrapper">
+              <span class="file-upload-label image-upload-label" id="label-image-3">Thumbnail Cover (Optional)</span>
+              <input type="file" class="song-image-file" accept="image/*" data-index="3">
+            </div>
+          </div>
+        </div>
+
+        <!-- Slot 5 -->
+        <div class="slot-card" data-index="4">
+          <div class="slot-number">5</div>
+          <div class="slot-inputs">
+            <input type="text" class="song-title-input" value="Song Title 5" placeholder="Song Title">
+            <input type="text" class="song-artist-input" value="ARTIST 5" placeholder="Artist">
+          </div>
+          <div class="slot-files">
+            <div class="file-upload-wrapper">
+              <span class="file-upload-label video-upload-label" id="label-video-4">Upload Video</span>
+              <input type="file" class="song-video-file" accept="video/*" data-index="4">
+            </div>
+            <div class="file-upload-wrapper">
+              <span class="file-upload-label image-upload-label" id="label-image-4">Thumbnail Cover (Optional)</span>
+              <input type="file" class="song-image-file" accept="image/*" data-index="4">
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="control-actions">
+        <button id="btn-play" class="btn btn-primary" disabled>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          Select & Play Selection
+        </button>
+        <button id="btn-record" class="btn btn-secondary" disabled>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3" fill="currentColor"></circle></svg>
+          Record & Download (.mp4)
+        </button>
+      </div>
+
+      <!-- Status Indicator -->
+      <div class="status-indicator">
+        <div class="spinner" id="status-spinner"></div>
+        <span id="status-text">Please upload videos for all 5 slots to enable selection and recording.</span>
+      </div>
+
+    </section>
+
+    <!-- Right Panel: Vertical Preview Screen -->
+    <section class="preview-section">
+      <div class="card-frame">
+        <canvas id="preview-canvas" width="1080" height="1920"></canvas>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Video elements will be placed dynamically here -->
+  <div id="video-pool"></div>
+
+  <footer>
+    <p><strong>How it works:</strong> The system extracts the first frame of your video as a placeholder if no thumbnail is provided. When playing, the selection cycles through the songs randomly, lands on one, and starts playing its video. Recording matches the canvas frame buffer and mixes audio tracks directly.</p>
+  </footer>
+
+  <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.0/dist/ffmpeg.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
