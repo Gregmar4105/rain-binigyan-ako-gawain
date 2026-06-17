@@ -314,18 +314,31 @@ async function startSelection(recordMode = false) {
     // Add audio destination tracks
     audioDest.stream.getAudioTracks().forEach(track => mixedStream.addTrack(track));
 
-    let mimeType = 'video/mp4;codecs=h264';
-    if (!MediaRecorder.isTypeSupported(mimeType)) {
-      mimeType = 'video/mp4';
-      if (!MediaRecorder.isTypeSupported(mimeType)) {
-        alert("Your browser does not support native MP4 recording. Please use Google Chrome, Microsoft Edge, or Apple Safari to record and download MP4 files.");
-        state.isAnimating = false;
-        state.isRecording = false;
-        enableControls();
-        statusSpinner.classList.remove('active');
-        statusText.textContent = "Recording failed: MP4 container not supported by your browser.";
-        return;
+    const candidateMimeTypes = [
+      'video/mp4;codecs=h264,aac',
+      'video/mp4;codecs=h264',
+      'video/mp4',
+      'video/webm;codecs=h264,opus',
+      'video/webm;codecs=vp9,opus',
+      'video/webm;codecs=vp8,opus',
+      'video/webm'
+    ];
+    let mimeType = '';
+    for (const type of candidateMimeTypes) {
+      if (MediaRecorder.isTypeSupported(type)) {
+        mimeType = type;
+        break;
       }
+    }
+
+    if (!mimeType) {
+      alert("Your browser does not support video recording. Please use Google Chrome, Microsoft Edge, Mozilla Firefox, or Apple Safari.");
+      state.isAnimating = false;
+      state.isRecording = false;
+      enableControls();
+      statusSpinner.classList.remove('active');
+      statusText.textContent = "Recording failed: Video recording is not supported by your browser.";
+      return;
     }
 
     try {
@@ -336,7 +349,7 @@ async function startSelection(recordMode = false) {
         }
       };
       recorder.onstop = async () => {
-        statusText.textContent = "Finalizing standard MP4 container (FastStart)...";
+        statusText.textContent = "Transcoding to H.264 video and AAC audio...";
         const rawBlob = new Blob(recordedChunks, { type: mimeType });
         
         try {
@@ -350,14 +363,30 @@ async function startSelection(recordMode = false) {
             corePath: 'https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js'
           });
           
+          ffmpeg.setProgress(({ ratio }) => {
+            if (ratio >= 0 && ratio <= 1) {
+              statusText.textContent = `Transcoding to social-media-compatible MP4: ${Math.round(ratio * 100)}%`;
+            }
+          });
+
           await ffmpeg.load();
           
-          // Write the raw fragmented MP4 to virtual filesystem
-          ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(rawBlob));
+          // Write the raw fragmented video to virtual filesystem
+          ffmpeg.FS('writeFile', 'input.bin', await fetchFile(rawBlob));
           
-          // Run remuxing: copy video/audio tracks directly (-c copy) and place index at start (-movflags +faststart)
-          // This is incredibly fast (takes 1-2s) and operates with 0% quality loss.
-          await ffmpeg.run('-i', 'input.mp4', '-c', 'copy', '-movflags', '+faststart', 'output.mp4');
+          // Run transcoding: transcode video to H.264 (using ultrafast preset for web efficiency),
+          // transcode audio to AAC, set pixel format to yuv420p for maximum platform support,
+          // and add +faststart flag so video plays instantly on web pages.
+          await ffmpeg.run(
+            '-i', 'input.bin',
+            '-c:v', 'libx264',
+            '-preset', 'ultrafast',
+            '-pix_fmt', 'yuv420p',
+            '-c:a', 'aac',
+            '-b:a', '128k',
+            '-movflags', '+faststart',
+            'output.mp4'
+          );
           
           // Read output file
           const data = ffmpeg.FS('readFile', 'output.mp4');
@@ -373,21 +402,11 @@ async function startSelection(recordMode = false) {
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
           
-          statusText.textContent = `Video saved and downloaded successfully as Facebook-compatible MP4!`;
+          statusText.textContent = `Video saved and downloaded successfully as H.264 & AAC MP4!`;
         } catch (err) {
-          console.warn("FFmpeg FastStart remux failed, falling back to raw fMP4 download:", err);
-          
-          // Fallback to downloading raw blob directly
-          const url = URL.createObjectURL(rawBlob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `playlist-selector-reveal.mp4`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          
-          statusText.textContent = `Downloaded raw fMP4 (FastStart failed). Open in VLC or Chrome.`;
+          console.error("FFmpeg H.264/AAC transcoding failed:", err);
+          alert("Export failed: Could not save the video as an MP4 file using H.264/AAC. Please ensure your browser supports WebAssembly.");
+          statusText.textContent = `Error: MP4 export failed.`;
         }
         
         statusSpinner.classList.remove('active');
